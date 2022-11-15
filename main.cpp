@@ -2,7 +2,7 @@
 #include "SDL2/SDL.h"
 #include "tile.h"
 
-const int WIDTH = 800, HEIGHT = 600;
+const int WIDTH = 800, HEIGHT = 800;
 const int SQ_SIZE = 10; // size of tiles
 
 int main( int argc, char *argv[] ) {

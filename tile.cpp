@@ -2,7 +2,7 @@
 #include "SDL2/SDL.h"
 #include <iostream>
 
-Tile::Tile(int n_x, int n_y, int n_size, SDL_Color n_color) {
+Tile::Tile( int n_x, int n_y, int n_size, SDL_Color n_color ) {
     x = n_x;
     y = n_y;
     size = n_size;
