@@ -1,41 +1,42 @@
-#include "grid.h"
 #include "tile.h"
+#include "grid.h"
+#include "constants.h"
 
 #include "SDL2/SDL.h"
+#include <iostream>
 
-Grid::Grid( int n_h, int n_w, int n_tile_size ) {
-    h = n_h;
-    w = n_w;
-    tile_size = n_tile_size;
+Grid::Grid() {
+    // std::cout << "making grid \n";
 
-    cols = w / tile_size;
-    rows = h / tile_size;
-
-    tile_grid[w][h];
-
+    Tile all_tiles[constants::T_TILES] = {};
 }
 
 void Grid::make_tiles() {
-    // declare color variable
-    // used for the color of each tile
     SDL_Color color;
+    for (int row = 0; row < constants::G_HEIGHT; row++) {
+        for (int col = 0; col < constants::G_WIDTH; col++) {
+            // gets the index of the 1d array based on an x (col) and a y (row)
+            int id = id_from_pos(row, col);
 
-    for (int i = 0; i < w / tile_size; i ++) {
-        for (int j = 0; j < h / tile_size; j++) {
-            // selec tile color definitions
-            color.r = (255 * j) / h;
-            color.g = 100;
-            color.b = (255 * i) / w;
+            color.r = (row * 255) / constants::G_HEIGHT; 
+            color.b = (col * 255) / constants::G_WIDTH;
 
-            // create new tile
-            Tile new_tile( i * tile_size, j * tile_size, tile_size, color);
-            tile_grid[i][j] = new_tile; 
+            all_tiles[id].setx(col * constants::SQ_SIZE);
+            all_tiles[id].sety(row * constants::SQ_SIZE);
+            all_tiles[id].setcolor(color);
+
         }
-    }   
+    }
 }
 
 void Grid::draw_all( SDL_Renderer * window_renderer ) {
 
-    
+    for (Tile t : all_tiles) {
+        t.draw(window_renderer);
+    }
 
+}
+
+int Grid::id_from_pos( int x, int y ) {
+    return ((constants::G_WIDTH - 1) * x) + x + y;
 }

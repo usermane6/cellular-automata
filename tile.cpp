@@ -1,13 +1,17 @@
 #include "tile.h"
 #include "SDL2/SDL.h"
+#include "constants.h"
 #include <iostream>
 
-Tile::Tile( int n_x, int n_y, int n_size, SDL_Color n_color ) {
-    x = n_x;
-    y = n_y;
-    size = n_size;
-    color = n_color;
-    // std::cout << rect.y << "\n";
+Tile::Tile() {
+    // std::cout << "making tile! \n";
+
+    x = 0;
+    y = 0;
+    size = constants::SQ_SIZE;
+    color = { 255, 255, 255 };
+
+    // std::cout << "tile made! \n";
 }
 
 void Tile::draw(SDL_Renderer * window_renderer) {

@@ -1,12 +1,14 @@
 #include "tile.h"
+#include "constants.h"
+
 #include "SDL2/SDL.h"
 
 class Grid {
     private:
-        int h, w, tile_size, cols, rows; 
-        Tile** tile_grid;
-        void make_tiles();
+        Tile all_tiles[constants::T_TILES];
+        int id_from_pos( int x, int y );
     public:
-        Grid( int, int, int );
+        Grid();
+        void make_tiles();
         void draw_all( SDL_Renderer* );
 };
