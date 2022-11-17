@@ -53,7 +53,7 @@ int Grid::id_from_pos( int x, int y ) {
 
 bool Grid::is_in_bounds( int x, int y ) {
     if (x >= constants::G_WIDTH) return false;
-    if (y >= constants::G_HEIGHT) return true;
+    if (y >= constants::G_HEIGHT) return false;
     if (y < 0 || x < 0) return false;
 
     return true;

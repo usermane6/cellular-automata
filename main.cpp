@@ -22,7 +22,6 @@ int main( int argc, char *argv[] ) {
     // m_grid.draw_one(m_window_renderer, 0, 0);
 
     SDL_Event event;
-    m_grid.draw_all(m_window_renderer);
     bool is_holding = false;
 
     while (true) {
@@ -39,7 +38,7 @@ int main( int argc, char *argv[] ) {
                     }
                 }
             }
-            
+
             if (event.type == SDL_KEYUP) {
                 if (event.key.keysym.sym == SDLK_SPACE) {
                     is_holding = false;

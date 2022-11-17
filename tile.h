@@ -9,7 +9,7 @@ class Tile {
         int size; // size (in pixels) of the tile
         int val; // value of the tile in Game of Life determines the livingness of tile
         SDL_Color color; // the color of the tile
-        SDL_Rect rect; // the 
+        SDL_Rect rect; // the rect used to draw to the screen.
     public: 
         // default constructor
         Tile();
