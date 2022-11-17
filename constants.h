@@ -11,6 +11,6 @@ namespace constants {
     constexpr int G_WIDTH { W_WIDTH / SQ_SIZE }; // tiles in each row ~ grid width
 
     constexpr int T_TILES { G_HEIGHT * G_WIDTH }; // total number of tiles in the grid array
-}
+};
 
 #endif

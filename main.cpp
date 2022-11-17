@@ -3,14 +3,12 @@
 
 #include "tile.h"
 #include "grid.h"
-
-const int WIDTH = 800, HEIGHT = 800; // dimensions of window
-const int SQ_SIZE = 10; // size of tiles
+#include "constants.h"
 
 int main( int argc, char *argv[] ) {
     SDL_Init( SDL_INIT_EVERYTHING );
 
-    SDL_Window *window = SDL_CreateWindow( "Cells", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, SDL_WINDOW_ALLOW_HIGHDPI);
+    SDL_Window *window = SDL_CreateWindow( "Cells", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, constants::W_WIDTH, constants::W_HEIGHT, SDL_WINDOW_ALLOW_HIGHDPI);
     SDL_Renderer *m_window_renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 
     if ( window = NULL ) {
@@ -23,13 +21,32 @@ int main( int argc, char *argv[] ) {
     m_grid.draw_all(m_window_renderer);
     // m_grid.draw_one(m_window_renderer, 0, 0);
 
-    SDL_Event windowEvent;
+    SDL_Event event;
+    m_grid.draw_all(m_window_renderer);
+    bool is_holding = false;
+
     while (true) {
-        if (SDL_PollEvent(&windowEvent)) {
-            if (windowEvent.type == SDL_QUIT) {
+        if (SDL_PollEvent(&event)) {
+            if (event.type == SDL_QUIT) {
                 break;
             }
+            if (event.type == SDL_KEYDOWN) {
+                if (event.key.keysym.sym == SDLK_SPACE) {
+                    if (!is_holding) {
+                        m_grid.iterate_conway();
+                        m_grid.draw_all(m_window_renderer);
+                        is_holding = true;
+                    }
+                }
+            }
+            
+            if (event.type == SDL_KEYUP) {
+                if (event.key.keysym.sym == SDLK_SPACE) {
+                    is_holding = false;
+                }
+            }
         }
+
     }
 
     SDL_DestroyWindow(window);

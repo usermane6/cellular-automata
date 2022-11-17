@@ -10,12 +10,12 @@ Tile::Tile() {
     y = 0;
     size = constants::SQ_SIZE;
     color = { 255, 255, 255 };
-
+    rect;
+    val = rand() % 2;
     // std::cout << "tile made! \n";
 }
 
 void Tile::draw(SDL_Renderer * window_renderer) {
-    SDL_Rect rect;
     rect.x = x;
     rect.y = y;
     rect.h = size;
@@ -32,5 +32,4 @@ void Tile::draw(SDL_Renderer * window_renderer) {
     SDL_RenderDrawRect(window_renderer, &rect);
     SDL_RenderFillRect(window_renderer, &rect);
     SDL_SetRenderDrawColor(window_renderer, 0, 0, 0, 255);
-    SDL_RenderPresent(window_renderer);
 }
