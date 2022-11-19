@@ -5,9 +5,6 @@
 
 Tile::Tile() {
     // std::cout << "making tile! \n";
-
-    x = 0;
-    y = 0;
     size = constants::SQ_SIZE;
     color = { 255, 255, 255 };
     rect;

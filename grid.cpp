@@ -4,46 +4,60 @@
 
 #include "SDL2/SDL.h"
 #include <iostream>
+#include <math.h>
 #include <algorithm>
 
 Grid::Grid() {
-    Tile all_tiles[ constants::T_TILES ] = {};
-    Tile copy_of_tiles[ constants::T_TILES ];
 }
 
-void Grid::make_tiles() {
-    SDL_Color color;
+// void Grid::make_tiles() {
+//     SDL_Color color;
 
-    for (int row = 0; row < constants::G_HEIGHT; row++) {
-        for (int col = 0; col < constants::G_WIDTH; col++) {
+//     for (int row = 0; row < constants::G_HEIGHT; row++) {
+//         for (int col = 0; col < constants::G_WIDTH; col++) {
             
-            int id = id_from_pos(row, col);
+//             int id = id_from_pos(row, col);
 
-            color.r = (row * 255) / constants::G_HEIGHT; 
-            color.b = (col * 255) / constants::G_WIDTH;
+//             // color.r = (row * 255) / constants::G_HEIGHT; 
+//             // color.b = (col * 255) / constants::G_WIDTH;
 
-            // color.r = 255;
-            color.g = 100;
-            // color.b = 255;
+//             color.r = 255;
+//             color.g = 255;
+//             color.b = 255;
 
-            all_tiles[id].setx(col * constants::SQ_SIZE);
-            all_tiles[id].sety(row * constants::SQ_SIZE);
-            all_tiles[id].setcolor(color);
+//             all_tiles[id].setx(col * constants::SQ_SIZE);
+//             all_tiles[id].sety(row * constants::SQ_SIZE);
+//             all_tiles[id].setcolor(color);
 
-        }
+//         }
+//     }
+// }
+
+// void Grid::draw_all( SDL_Renderer * window_renderer ) {
+//     SDL_RenderClear(window_renderer);
+
+//     for (int : all_tiles) {
+//         if (t) continue;
+
+//         t.draw(window_renderer);
+//     }
+
+//     SDL_RenderPresent(window_renderer);
+
+// }
+
+void Grid::draw_all( SDL_Renderer * window_renderer) {
+
+    SDL_Color color;
+    SDL_Rect rect;
+
+    int x = 0, y = 0;
+
+    for (int t : all_tiles) {
+        
+
+
     }
-}
-
-void Grid::draw_all( SDL_Renderer * window_renderer ) {
-    SDL_RenderClear(window_renderer);
-
-    for (Tile t : all_tiles) {
-        if (t.getval() == 0) continue;
-
-        t.draw(window_renderer);
-    }
-
-    SDL_RenderPresent(window_renderer);
 
 }
 
@@ -72,12 +86,16 @@ int Grid::alive_neighbors( int x, int y ) {
 
             id = id_from_pos( x + i, y + j );
             
-            if (copy_of_tiles[id].getval() == 1)  num_alive ++;
+            if (copy_of_tiles[id] == 1) num_alive ++;
         }
     }
     // std:: cout << num_alive << std::endl;
 
     return num_alive;
+}
+
+int Grid::dist_from_center( int x, int y ) {
+    return std::sqrt( pow( ( x - ( constants::G_WIDTH / 2 ) ), 2 ) + pow( ( y - ( constants::G_HEIGHT / 2 ) ), 2 ) );
 }
 
 void Grid::iterate_conway() {
@@ -93,11 +111,17 @@ void Grid::iterate_conway() {
             
             num_alive = alive_neighbors(row, col);
 
-            if (copy_of_tiles[id].getval() == 0) {
-                if (num_alive == 3) all_tiles[id].setval(1);
+            if (copy_of_tiles[id] == 0) {
+                if (num_alive == 3) {
+                    all_tiles[id] = 1;
+                }
             } else {
-                if (num_alive < 2 || num_alive > 3) all_tiles[id].setval(0);
+                if (num_alive < 2 || num_alive > 3) {
+                    all_tiles[id] = 0;
+                } 
             }
+            
+            // std::cout << all_tiles[id].getval() << std::endl;
 
             // std::cout << "( " << row << ", " << col << " ) ";
             // std::cout << copy_of_tiles[id].getval() << ", " << all_tiles[id].getval() << "\n";
@@ -105,3 +129,42 @@ void Grid::iterate_conway() {
         }
     }
 }
+
+// void Grid::change_color_mode() {
+//     current_mode ++;
+//     if (current_mode == last) current_mode = 0;
+
+//     SDL_Color color;
+//     int id;
+    
+//     for (int row = 0; row < constants::G_HEIGHT; row++) {
+//         for (int col = 0; col < constants::G_WIDTH; col++) {
+
+//             switch (current_mode) {
+//                 case white:
+//                     color.r = 255;
+//                     color.g = 255;
+//                     color.b = 255;
+//                     break;
+
+//                 case gradient:
+//                     color.r = (row * 255) / constants::G_HEIGHT;
+//                     color.g = 100;
+//                     color.b = (col * 255) / constants::G_WIDTH;
+//                     break;
+
+//                 case center:
+//                     int value = ( ( 60 - dist_from_center(row, col) ) * 255 ) / 60;
+//                     color.r = value;
+//                     color.g = value;
+//                     color.b = value;
+//                     break;        
+//             }
+            
+//             id = id_from_pos(row, col);
+
+//             all_tiles[id].setcolor(color);
+
+//         }
+//     }
+// }

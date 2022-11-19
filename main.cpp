@@ -22,7 +22,7 @@ int main( int argc, char *argv[] ) {
     // m_grid.draw_one(m_window_renderer, 0, 0);
 
     SDL_Event event;
-    bool is_holding = false;
+    bool is_holding_space = false, is_holding_color = false;
 
     while (true) {
         if (SDL_PollEvent(&event)) {
@@ -31,17 +31,29 @@ int main( int argc, char *argv[] ) {
             }
             if (event.type == SDL_KEYDOWN) {
                 if (event.key.keysym.sym == SDLK_SPACE) {
-                    if (!is_holding) {
+                    if (!is_holding_space) {
                         m_grid.iterate_conway();
                         m_grid.draw_all(m_window_renderer);
-                        is_holding = true;
+                        // is_holding_space = true;
                     }
                 }
+
+                if (event.key.keysym.sym == SDLK_c) {
+                    if (!is_holding_color) {
+                        m_grid.change_color_mode();
+                        m_grid.draw_all(m_window_renderer);
+                        is_holding_color = true;
+                    }
+                }
+
             }
 
             if (event.type == SDL_KEYUP) {
                 if (event.key.keysym.sym == SDLK_SPACE) {
-                    is_holding = false;
+                    is_holding_space = false;
+                }
+                if (event.key.keysym.sym == SDLK_c) {
+                    is_holding_color = false;
                 }
             }
         }
