@@ -7,7 +7,9 @@
 
 class Grid {
     private:
-        // TODO use enum for mode
+
+        
+
         int mode; // what mode to render the colors
         int all_tiles[ constants::T_TILES ] = {}; // contains all tiles in the grid
         int copy_of_tiles[ constants::T_TILES ]; // clone of all tiles, used for making new generations/iterating
@@ -40,6 +42,15 @@ class Grid {
 
 
     public:
+
+        // enums enums enums!!!
+
+        enum draw_modes {
+            conway = 0,
+            rps,
+            langton,
+        };
+
         Grid( int n_mode );
         // calls the draw function for every tile in the all_tiles array
         void draw_all( SDL_Renderer *window_renderer );

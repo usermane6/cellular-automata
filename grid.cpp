@@ -6,7 +6,8 @@
 #include <math.h>
 #include <algorithm>
 
-// TODO make dedicated iterae function that operates based on mode
+// TODO make dedicated iterate function that operates based on mode
+// TODO make get color of tile function?
 
 
 Grid::Grid( int n_mode ) {
@@ -15,15 +16,15 @@ Grid::Grid( int n_mode ) {
 
     for (int i = 0; i < constants::T_TILES; i ++) {
             switch ( mode ) {
-            case 0 :
-                all_tiles[i] = rand() % 2;
-                break;
-            case 1 :
-                all_tiles[i] = rand() % 3;
-                break;
-            case 2 :
-                all_tiles[i] = 1;
-                break;
+                case conway :
+                    all_tiles[i] = rand() % 2;
+                    break;
+                case rps :
+                    all_tiles[i] = rand() % 3;
+                    break;
+                case langton :
+                    all_tiles[i] = 1;
+                    break;
         }
     }
 }
@@ -45,12 +46,12 @@ void Grid::draw_all( SDL_Renderer * window_renderer ) {
         rect.y = y * constants::SQ_SIZE;
 
         switch (mode) {
-            case 0: case 2:
+            case conway: case langton:
                 color.r = 255 * t;
                 color.g = 255 * t;
                 color.b = 255 * t;
                 break;
-            case 1:
+            case rps:
                 color.r = 0;
                 color.g = 0;
                 color.b = 0;
@@ -92,12 +93,12 @@ void Grid::draw_one( int x, int y, SDL_Renderer * window_renderer ) {
     int t = all_tiles[id];
 
     switch (mode) {
-        case 0: case 2:
+        case conway: case langton:
             color.r = 255 * t;
             color.g = 255 * t;
             color.b = 255 * t;
             break;
-        case 1:
+        case rps:
             color.r = 0;
             color.g = 0;
             color.b = 0;
@@ -283,8 +284,8 @@ void Grid::iterate_langton( SDL_Renderer * window_renderer ) {
 
 void Grid::turn_ant( int direction ) {
     ant_facing += direction;
-    if (ant_facing == 4) { ant_facing = 0; } 
-    else if (ant_facing == -1) { ant_facing = 3; }
+    if (ant_facing == 4) ant_facing = 0;  
+    else if (ant_facing == -1) ant_facing = 3; 
 }
 
 void Grid::move_ant() {

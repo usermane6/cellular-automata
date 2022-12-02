@@ -15,7 +15,7 @@ int main( int argc, char *argv[] ) {
         return 1;
     }
 
-    Grid m_grid( 2 ); 
+    Grid m_grid( Grid::langton ); 
     // m_grid.make_tiles();
     m_grid.draw_all(m_window_renderer);
     // m_grid.draw_one(m_window_renderer, 0, 0);
