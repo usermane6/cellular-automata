@@ -12,7 +12,17 @@ namespace constants {
 
     constexpr int T_TILES { G_HEIGHT * G_WIDTH }; // total number of tiles in the grid array
 
-    constexpr int RPS_THRESHHOLD { 2 };
-};
+    constexpr int RPS_THRESHHOLD { 3 };
+
+    constexpr int W_CENTER[2] { W_WIDTH / 2, W_HEIGHT / 2 };
+    constexpr int G_CENTER[2] { G_WIDTH / 2, G_HEIGHT / 2 };
+
+    constexpr int DIRECTIONS[4][2] {
+            { 0, 1 },
+            { 1, 0 },
+            { 0, -1 },
+            { -1, 0 },
+        };
+}
 
 #endif

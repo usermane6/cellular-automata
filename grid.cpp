@@ -6,6 +6,9 @@
 #include <math.h>
 #include <algorithm>
 
+// TODO make dedicated iterae function that operates based on mode
+
+
 Grid::Grid( int n_mode ) {
 
     mode = n_mode;
@@ -18,11 +21,14 @@ Grid::Grid( int n_mode ) {
             case 1 :
                 all_tiles[i] = rand() % 3;
                 break;
+            case 2 :
+                all_tiles[i] = 1;
+                break;
         }
     }
 }
 
-void Grid::draw_all( SDL_Renderer * window_renderer) {
+void Grid::draw_all( SDL_Renderer * window_renderer ) {
 
     SDL_Color color;
     SDL_Rect rect;
@@ -39,7 +45,7 @@ void Grid::draw_all( SDL_Renderer * window_renderer) {
         rect.y = y * constants::SQ_SIZE;
 
         switch (mode) {
-            case 0:
+            case 0: case 2:
                 color.r = 255 * t;
                 color.g = 255 * t;
                 color.b = 255 * t;
@@ -52,7 +58,7 @@ void Grid::draw_all( SDL_Renderer * window_renderer) {
                 if (t == 0) color.r = 255;
                 else if (t == 1) color.g = 255;
                 else if (t == 2) color.b = 255;
-                break;
+                break;   
         }
 
         SDL_SetRenderDrawColor(window_renderer, color.r, color.g, color.b, 255);
@@ -73,8 +79,50 @@ void Grid::draw_all( SDL_Renderer * window_renderer) {
 
 }
 
+void Grid::draw_one( int x, int y, SDL_Renderer * window_renderer ) {
+    SDL_Color color;
+    SDL_Rect rect;
+    rect.h = constants::SQ_SIZE;
+    rect.w = constants::SQ_SIZE;
+
+    rect.x = x * constants::SQ_SIZE;
+    rect.y = y * constants::SQ_SIZE;
+
+    int id = id_from_pos( x, y );
+    int t = all_tiles[id];
+
+    switch (mode) {
+        case 0: case 2:
+            color.r = 255 * t;
+            color.g = 255 * t;
+            color.b = 255 * t;
+            break;
+        case 1:
+            color.r = 0;
+            color.g = 0;
+            color.b = 0;
+
+            if (t == 0) color.r = 255;
+            else if (t == 1) color.g = 255;
+            else if (t == 2) color.b = 255;
+            break;   
+    }
+
+    SDL_SetRenderDrawColor(window_renderer, color.r, color.g, color.b, 255);
+    SDL_RenderDrawRect(window_renderer, &rect);
+    SDL_RenderFillRect(window_renderer, &rect);
+    SDL_SetRenderDrawColor(window_renderer, 0, 0, 0, 255);
+    SDL_RenderPresent(window_renderer);
+}
+
 int Grid::id_from_pos( int x, int y ) {
+    if (!is_in_bounds( x, y )) { return -1; }
     return ((constants::G_WIDTH - 1) * y) + x + y;
+}
+
+int Grid::id_from_pos( int pos[2] ) {
+    if (!is_in_bounds( pos[0], pos[1] )) { return -1; }
+    return ((constants::G_WIDTH - 1) * pos[1]) + pos[0] + pos[1];
 }
 
 bool Grid::is_in_bounds( int x, int y ) {
@@ -201,4 +249,49 @@ void Grid::iterate_rand_rps() {
         } 
 
     } 
+}
+
+void Grid::iterate_langton( SDL_Renderer * window_renderer ) {
+    
+    int ant_id = id_from_pos( ant_pos );
+    // std::cout << "iterating !!";
+
+    if ( is_ant_dead ) return;
+
+    // std::cout << "not dead!";
+    // TODO cleanup this switch, maybe add move ant function
+    switch ( all_tiles[ant_id] ) {
+        case 0:
+            // turn left on black tile
+            all_tiles[ant_id] = 1;
+            turn_ant( -1 );
+            draw_one( ant_pos[0], ant_pos[1], window_renderer);
+            move_ant();
+
+            break;
+        case 1:
+             // turn right on white tile
+            all_tiles[ant_id] = 0;
+            turn_ant( 1 );
+            draw_one( ant_pos[0], ant_pos[1], window_renderer);
+            move_ant();
+            
+            break;
+            
+    }
+}
+
+void Grid::turn_ant( int direction ) {
+    ant_facing += direction;
+    if (ant_facing == 4) { ant_facing = 0; } 
+    else if (ant_facing == -1) { ant_facing = 3; }
+}
+
+void Grid::move_ant() {
+
+    ant_pos[0] += constants::DIRECTIONS[ant_facing][0];
+    ant_pos[1] += constants::DIRECTIONS[ant_facing][1];
+
+    if ( !is_in_bounds(ant_pos[0], ant_pos[1]) ) is_ant_dead = true; 
+
 }
