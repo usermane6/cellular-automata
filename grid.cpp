@@ -6,7 +6,6 @@
 #include <math.h>
 #include <algorithm>
 
-// TODO make dedicated iterate function that operates based on mode
 // TODO make get color of tile function?
 
 
@@ -29,7 +28,7 @@ Grid::Grid( int n_mode ) {
     }
 }
 
-void Grid::draw_all( SDL_Renderer * window_renderer ) {
+void Grid::draw_all( SDL_Renderer* window_renderer ) {
 
     SDL_Color color;
     SDL_Rect rect;
@@ -56,9 +55,9 @@ void Grid::draw_all( SDL_Renderer * window_renderer ) {
                 color.g = 0;
                 color.b = 0;
 
-                if (t == 0) color.r = 255;
-                else if (t == 1) color.g = 255;
-                else if (t == 2) color.b = 255;
+                if (t == rock) color.r = 255;
+                else if (t == paper) color.g = 255;
+                else if (t == scissors) color.b = 255;
                 break;   
         }
 
@@ -80,7 +79,7 @@ void Grid::draw_all( SDL_Renderer * window_renderer ) {
 
 }
 
-void Grid::draw_one( int x, int y, SDL_Renderer * window_renderer ) {
+void Grid::draw_one( int x, int y, SDL_Renderer* window_renderer ) {
     SDL_Color color;
     SDL_Rect rect;
     rect.h = constants::SQ_SIZE;
@@ -205,13 +204,13 @@ void Grid::iterate_rps() {
    
     for (int i = 0; i < constants::T_TILES; i++) {
 
-        r = neighbors_with_value(x, y, 0);
-        p = neighbors_with_value(x, y, 1);
-        s = neighbors_with_value(x, y, 2);
+        r = neighbors_with_value(x, y, rock); // amount of rock neighbors
+        p = neighbors_with_value(x, y, paper);
+        s = neighbors_with_value(x, y, scissors);
 
-        if (copy_of_tiles[i] == 0 && p > thresh) all_tiles[i] = 1;
-        else if (copy_of_tiles[i] == 1 && s > thresh) all_tiles[i] = 2;
-        else if (copy_of_tiles[i] == 2 && r > thresh) all_tiles[i] = 0;
+        if (copy_of_tiles[i] == rock && p > thresh) all_tiles[i] = paper;
+        else if (copy_of_tiles[i] == paper && s > thresh) all_tiles[i] = scissors;
+        else if (copy_of_tiles[i] == scissors && r > thresh) all_tiles[i] = rock;
 
         x++; 
     
@@ -252,7 +251,7 @@ void Grid::iterate_rand_rps() {
     } 
 }
 
-void Grid::iterate_langton( SDL_Renderer * window_renderer ) {
+void Grid::iterate_langton( SDL_Renderer* window_renderer ) {
     
     int ant_id = id_from_pos( ant_pos );
     // std::cout << "iterating !!";
@@ -281,6 +280,24 @@ void Grid::iterate_langton( SDL_Renderer * window_renderer ) {
             
     }
 }
+
+void Grid::iterate( SDL_Renderer* window_renderer ) {
+    switch (mode) {
+        case conway:
+            iterate_conway();
+            draw_all(window_renderer);
+            break;
+        case rps:
+            iterate_rps();
+            draw_all(window_renderer);
+            break;
+        case langton:
+            iterate_langton(window_renderer);
+            break;
+    } 
+}
+
+// ----- Langtons ant methods -----
 
 void Grid::turn_ant( int direction ) {
     ant_facing += direction;

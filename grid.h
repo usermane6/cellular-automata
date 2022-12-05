@@ -7,9 +7,6 @@
 
 class Grid {
     private:
-
-        
-
         int mode; // what mode to render the colors
         int all_tiles[ constants::T_TILES ] = {}; // contains all tiles in the grid
         int copy_of_tiles[ constants::T_TILES ]; // clone of all tiles, used for making new generations/iterating
@@ -35,10 +32,18 @@ class Grid {
         int dist_from_center( int x, int y);
         // changes the directon of the ant right ( 1 ) or left ( -1 )
         void turn_ant( int direction );
-
+        // moves the ant in its current diection
         void move_ant();
 
         void draw_one( int x, int y, SDL_Renderer * window_renderer );
+        // iterates to a new generation using the ruleset of Conway's Game of Life
+        void iterate_conway();
+        // iterates using rock paper scissors rules
+        void iterate_rps();
+        // iterates using rps, but randomly increases threshold
+        void iterate_rand_rps();
+        // iterates using langtons ant
+        void iterate_langton( SDL_Renderer * window_renderer );
 
 
     public:
@@ -51,17 +56,19 @@ class Grid {
             langton,
         };
 
+        enum tile_types {
+            black = 0,
+            white,
+            rock = 0,
+            paper,
+            scissors,
+        };
+
         Grid( int n_mode );
         // calls the draw function for every tile in the all_tiles array
         void draw_all( SDL_Renderer *window_renderer );
-        // iterates to a new generation using the ruleset of Conway's Game of Life
-        void iterate_conway();
-        // iterates using rock paper scissors rules
-        void iterate_rps();
-        // iterates using rps, but randomly increases threshold
-        void iterate_rand_rps();
-        // iterates using langtons ant
-        void iterate_langton( SDL_Renderer * window_renderer );
+
+        void iterate( SDL_Renderer * window_renderer );
 
 };
 
