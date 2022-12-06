@@ -28,7 +28,8 @@ int main( int argc, char *argv[] ) {
                 break;
             }
         }
-        // m_grid.iterate(m_window_renderer);
+
+        m_grid.iterate(m_window_renderer);
     }
 
     SDL_DestroyWindow(window);

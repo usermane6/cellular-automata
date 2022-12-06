@@ -2,11 +2,14 @@
 #include "constants.hpp"
 
 #include "SDL2/SDL.h"
+
 #include <iostream>
 #include <math.h>
-#include <algorithm>
+// #include <algorithm>
 
 // TODO make get color of tile function?
+// TODO make single tile a certain value
+// TODO fixed shapes?
 
 
 Grid::Grid( int n_mode ) {
@@ -66,8 +69,8 @@ void Grid::draw_all( SDL_Renderer* window_renderer ) {
                 break;   
             case war:
                 val = 255 * ( ( 1.0 * t) / 13 );
-                color.r = 150;
-                color.g = 255 - val;
+                color.r = 255 - val;
+                color.g = val;
                 color.b = val;
                 break;
         }
@@ -128,7 +131,7 @@ void Grid::draw_one( int x, int y, SDL_Renderer* window_renderer ) {
 
 int Grid::id_from_pos( int x, int y ) {
     if (!is_in_bounds( x, y )) { return -1; }
-    return ((constants::G_WIDTH - 1) * y) + x + y;
+    return (( constants::G_WIDTH - 1) * y) + x + y;
 }
 
 int Grid::id_from_pos( int pos[2] ) {
@@ -181,28 +184,28 @@ int Grid::neighbors_with_value( int x, int y, int value, bool or_greater ) {
     return num;
 }
 
+// unused
 int Grid::dist_from_center( int x, int y ) {
+    // simply a distance function
     return std::sqrt( pow( ( x - ( constants::G_WIDTH / 2 ) ), 2 ) + pow( ( y - ( constants::G_HEIGHT / 2 ) ), 2 ) );
 }
 
+// --------- iterators ------------
+
 void Grid::iterate_conway() {
     int id, num_alive;
-    std::copy(std::begin(all_tiles), std::end(all_tiles), std::begin(copy_of_tiles));
-
     int x = 0, y = 0;
+    std::copy(std::begin(all_tiles), std::end(all_tiles), std::begin(copy_of_tiles));
 
     for (int i = 0; i < constants::T_TILES; i++) {
 
         num_alive = alive_neighbors(x, y);
 
-
         if (copy_of_tiles[1] == 0 && num_alive == 3) all_tiles[i] = 1;
-
         else if (num_alive < 2 || num_alive > 3) all_tiles[i] = 0;
 
-        
+        // manage positions
         x++; 
-
         if ( x >= constants::G_WIDTH ) {
             x = 0;
             y++;
@@ -223,12 +226,13 @@ void Grid::iterate_rps() {
         p = neighbors_with_value(x, y, paper);
         s = neighbors_with_value(x, y, scissors);
 
+        // compares and replaces
         if (copy_of_tiles[i] == rock && p > thresh) all_tiles[i] = paper;
         else if (copy_of_tiles[i] == paper && s > thresh) all_tiles[i] = scissors;
         else if (copy_of_tiles[i] == scissors && r > thresh) all_tiles[i] = rock;
 
+        // manage positions
         x++; 
-    
         if ( x >= constants::G_WIDTH ) {
             x = 0;
             y++;
@@ -299,12 +303,27 @@ void Grid::iterate_langton( SDL_Renderer* window_renderer ) {
 void Grid::iterate_war() {
     int x = 0, y = 0;
     int greater_neighbors;
-    int thresh = constants::RPS_THRESHHOLD;
 
     std::copy(std::begin(all_tiles), std::end(all_tiles), std::begin(copy_of_tiles));
+
+    for (int i = 0; i < constants::T_TILES; i++) {
+
+        greater_neighbors = neighbors_with_value(x, y, copy_of_tiles[i], true);
+
+        if (greater_neighbors <= constants::WAR_THRESHHOLD) all_tiles[i] --; 
+        else all_tiles[i]++;
+
+        // manage x,y positions
+        x++;    
+        if ( x >= constants::G_WIDTH ) {
+            x = 0;
+            y++;
+        } 
+    }
 }
 
 void Grid::iterate( SDL_Renderer* window_renderer ) {
+    // todo cleanup
     switch (mode) {
         case conway:
             iterate_conway();
@@ -316,6 +335,10 @@ void Grid::iterate( SDL_Renderer* window_renderer ) {
             break;
         case langton:
             iterate_langton(window_renderer);
+            break;
+        case war: 
+            iterate_war();
+            draw_all(window_renderer);
             break;
     } 
 }
