@@ -1,9 +1,11 @@
 #ifndef GRID_H
 #define GRID_H
 
-#include "constants.h"
+#include "constants.hpp"
 
 #include "SDL2/SDL.h"
+
+//todo cleanup
 
 class Grid {
     private:
@@ -11,7 +13,6 @@ class Grid {
         int all_tiles[ constants::T_TILES ] = {}; // contains all tiles in the grid
         int copy_of_tiles[ constants::T_TILES ]; // clone of all tiles, used for making new generations/iterating
 
-        // TODO use enum for tile types
         // ------ Langton's ant variables -------
 
         int ant_pos[2] = { constants::G_CENTER[0] * 1, constants::G_CENTER[1] * 1 }; // position of ant on grid
@@ -27,7 +28,7 @@ class Grid {
         // returns the number of neighbors with value 1
         int alive_neighbors( int x, int y);
         // returns all neighbors of a given point with certain value
-        int neighbors_with_value( int x, int y, int value );
+        int neighbors_with_value( int x, int y, int value, bool or_greater = false );
         // calculates the distance from the center point
         int dist_from_center( int x, int y);
         // changes the directon of the ant right ( 1 ) or left ( -1 )
@@ -44,7 +45,8 @@ class Grid {
         void iterate_rand_rps();
         // iterates using langtons ant
         void iterate_langton( SDL_Renderer * window_renderer );
-
+        // first custom algorithm, assigns each a random card value when it wins in certain amount of games above threshold, assigned to lowest neighbor
+        void iterate_war();
 
     public:
 
@@ -54,6 +56,7 @@ class Grid {
             conway = 0,
             rps,
             langton,
+            war,
         };
 
         enum tile_types {

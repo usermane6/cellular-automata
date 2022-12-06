@@ -1,8 +1,8 @@
 #include <iostream>
 #include "SDL2/SDL.h"
 
-#include "grid.h"
-#include "constants.h"
+#include "grid.hpp"
+#include "constants.hpp"
 
 int main( int argc, char *argv[] ) {
     SDL_Init( SDL_INIT_EVERYTHING );
@@ -15,7 +15,7 @@ int main( int argc, char *argv[] ) {
         return 1;
     }
 
-    Grid m_grid( Grid::rps ); 
+    Grid m_grid( Grid::war ); 
     // m_grid.make_tiles();
     m_grid.draw_all(m_window_renderer);
     // m_grid.draw_one(m_window_renderer, 0, 0);
@@ -28,7 +28,7 @@ int main( int argc, char *argv[] ) {
                 break;
             }
         }
-        m_grid.iterate(m_window_renderer);
+        // m_grid.iterate(m_window_renderer);
     }
 
     SDL_DestroyWindow(window);

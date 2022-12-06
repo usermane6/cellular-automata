@@ -1,5 +1,5 @@
-#include "grid.h"
-#include "constants.h"
+#include "grid.hpp"
+#include "constants.hpp"
 
 #include "SDL2/SDL.h"
 #include <iostream>
@@ -21,8 +21,11 @@ Grid::Grid( int n_mode ) {
                 case rps :
                     all_tiles[i] = rand() % 3;
                     break;
-                case langton :
+                case langton:
                     all_tiles[i] = 1;
+                    break;
+                case war:
+                    all_tiles[i] = rand() % 13;
                     break;
         }
     }
@@ -36,6 +39,8 @@ void Grid::draw_all( SDL_Renderer* window_renderer ) {
     rect.w = constants::SQ_SIZE;
 
     int x = 0, y = 0;
+
+    double val;
 
     for (int t : all_tiles) {
 
@@ -59,6 +64,12 @@ void Grid::draw_all( SDL_Renderer* window_renderer ) {
                 else if (t == paper) color.g = 255;
                 else if (t == scissors) color.b = 255;
                 break;   
+            case war:
+                val = 255 * ( ( 1.0 * t) / 13 );
+                color.r = 150;
+                color.g = 255 - val;
+                color.b = val;
+                break;
         }
 
         SDL_SetRenderDrawColor(window_renderer, color.r, color.g, color.b, 255);
@@ -151,7 +162,7 @@ int Grid::alive_neighbors( int x, int y ) {
     return num_alive;
 }
 
-int Grid::neighbors_with_value( int x, int y, int value ) {
+int Grid::neighbors_with_value( int x, int y, int value, bool or_greater ) {
     int id, num = 0;
 
     for (int i = -1; i < 2; i ++) {
@@ -160,7 +171,11 @@ int Grid::neighbors_with_value( int x, int y, int value ) {
 
             if ( !is_in_bounds(x + i, y + j) || (i == 0 && j == 0) ) continue;
             
-            if ( copy_of_tiles[id] == value ) num ++;
+            if ( or_greater ) {
+                if ( copy_of_tiles[id] >= value ) num ++;
+            } else {
+                if ( copy_of_tiles[id] == value ) num ++;
+            }
         }
     }
     return num;
@@ -279,6 +294,14 @@ void Grid::iterate_langton( SDL_Renderer* window_renderer ) {
             break;
             
     }
+}
+
+void Grid::iterate_war() {
+    int x = 0, y = 0;
+    int greater_neighbors;
+    int thresh = constants::RPS_THRESHHOLD;
+
+    std::copy(std::begin(all_tiles), std::end(all_tiles), std::begin(copy_of_tiles));
 }
 
 void Grid::iterate( SDL_Renderer* window_renderer ) {
