@@ -69,7 +69,11 @@ void Grid::draw_all( SDL_Renderer* window_renderer ) {
                 break;   
             case war:
                 val = 255 * ( ( 1.0 * t) / 13 );
-                color.r = 255 - val;
+                // color.r = 255 - val;
+                // color.g = val;
+                // color.b = val;
+
+                color.r = val;
                 color.g = val;
                 color.b = val;
                 break;
