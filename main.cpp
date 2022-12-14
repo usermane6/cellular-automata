@@ -39,11 +39,11 @@ int main( int argc, char *argv[] ) {
     SDL_Surface* text_surface;
     SDL_Texture* text_texture;
 
-    Grid m_grid( Grid::war ); 
+    Grid m_grid( Grid::conway ); 
     m_grid.draw_all(m_window_renderer);
 
     Uint32 start_time, frame_time;
-    double fps;
+    double fps, fps_avg = 0;
 
     SDL_Event event;
 
@@ -61,8 +61,11 @@ int main( int argc, char *argv[] ) {
         frame_time = SDL_GetTicks() - start_time;
         
         fps = (frame_time > 0) ? 1000.0 / frame_time : 0.0;
+        fps_avg = fps_avg == 0 ? fps : (fps_avg + fps) / 2;
         display_fps(fps, m_window_renderer, arial, text_surface, text_texture);
     }
+
+    std::cout << "Average Fps: " << fps_avg;
 
 
     // end of game
