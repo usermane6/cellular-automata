@@ -72,7 +72,7 @@ void Grid::draw_all( SDL_Renderer* window_renderer ) {
                 // color.r = 255 - val;
                 // color.g = val;
                 // color.b = val;
-
+                if (val > 255) std::cout << "huh?";
                 color.r = val;
                 color.g = val;
                 color.b = val;
@@ -314,8 +314,14 @@ void Grid::iterate_war() {
 
         greater_neighbors = neighbors_with_value(x, y, copy_of_tiles[i], true);
 
-        if (greater_neighbors <= constants::WAR_THRESHHOLD) all_tiles[i] --; 
-        else all_tiles[i]++;
+        if (greater_neighbors <= constants::WAR_THRESHHOLD) all_tiles[i]--; 
+        else {
+            all_tiles[i] ++;
+            // make sure value isn't to big
+            all_tiles[i] = all_tiles[i] >= 13 ? 0 : all_tiles[i];
+        }
+        
+        // if (all_tiles[i] >= 13) std::cout << "val: " << all_tiles[i] << " ";
 
         // manage x,y positions
         x++;    
