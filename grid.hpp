@@ -27,27 +27,34 @@ class Grid {
         */
         int id_from_pos( int pos[2] );
         // checks if a given position is in the bounds of the array
+
+
         bool is_in_bounds( int x, int y);
         // returns the number of neighbors with value 1
         int alive_neighbors( int x, int y);
         // returns all neighbors of a given point with certain value
         int neighbors_with_value( int x, int y, int value, bool or_greater = false );
         // calculates the distance from the center point
+
         int dist_from_center( int x, int y);
-        // changes the directon of the ant right ( 1 ) or left ( -1 )
-        void turn_ant( int direction );
-        // moves the ant in its current diection
-        void move_ant();
         // draws a single tile to screen, without clearing the renderer
         void draw_one( int x, int y, SDL_Renderer * window_renderer );
+        // 
+        SDL_Color get_tile_color( int id, int t );
         // iterates to a new generation using the ruleset of Conway's Game of Life
         void iterate_conway();
         // iterates using rock paper scissors rules
         void iterate_rps();
         // iterates using rps, but randomly increases threshold
         void iterate_rand_rps();
+
         // iterates using langtons ant
         void iterate_langton( SDL_Renderer * window_renderer );
+        // changes the directon of the ant right ( 1 ) or left ( -1 )
+        void turn_ant( int direction );
+        // moves the ant in its current diection
+        void move_ant();
+
         /* 
         first custom algorithm, assigns each a random card value
         for each tile, checks if it wins a certain amount of games against the neighbors 
@@ -79,6 +86,9 @@ class Grid {
         void draw_all( SDL_Renderer *window_renderer );
         // creates a new iteration 
         void iterate( SDL_Renderer * window_renderer );
+
+        void reset( SDL_Renderer *window_renderer );
+        void reset( SDL_Renderer *window_renderer, int n_mode );
 
 };
 

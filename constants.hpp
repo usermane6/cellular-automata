@@ -13,7 +13,9 @@ namespace constants {
     constexpr int T_TILES { G_HEIGHT * G_WIDTH }; // total number of tiles in the grid array
 
     constexpr int RPS_THRESHHOLD { 2 }; // amount of rps losses required to change color
-    constexpr int WAR_THRESHHOLD { 7 }; // amount of war losses 
+
+    constexpr int WAR_THRESHHOLD { 3 }; // amount of war losses 
+    constexpr int WAR_CARD_COUNT { 50 }; // amount of different cards in a "deck" of cards
 
     constexpr int W_CENTER[2] { W_WIDTH / 2, W_HEIGHT / 2 }; // center in terms of pixels, window center
     constexpr int G_CENTER[2] { G_WIDTH / 2, G_HEIGHT / 2 }; // center in terms of grid tiles, grid center
@@ -24,6 +26,8 @@ namespace constants {
             { 0, -1 },
             { -1, 0 },
         }; 
+
+    constexpr int  FONT_SIZE = 20;
 }
 
 #endif

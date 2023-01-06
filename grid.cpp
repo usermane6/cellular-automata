@@ -7,7 +7,6 @@
 #include <math.h>
 // #include <algorithm>
 
-// TODO make get color of tile function?
 // TODO make single tile a certain value
 // TODO fixed shapes?
 
@@ -28,10 +27,40 @@ Grid::Grid( int n_mode ) {
                     all_tiles[i] = 1;
                     break;
                 case war:
-                    all_tiles[i] = rand() % 13;
+                    all_tiles[i] = rand() % constants::WAR_CARD_COUNT;
                     break;
         }
     }
+}
+
+void Grid::reset( SDL_Renderer *window_renderer ) {
+
+    ant_pos[0] = constants::G_CENTER[0] * 1; 
+    ant_pos[1] = constants::G_CENTER[1] * 1;
+
+    for (int i = 0; i < constants::T_TILES; i ++) {
+            switch ( mode ) {
+                case conway :
+                    all_tiles[i] = rand() % 2;
+                    break;
+                case rps :
+                    all_tiles[i] = rand() % 3;
+                    break;
+                case langton:
+                    all_tiles[i] = 1;
+                    break;
+                case war:
+                    all_tiles[i] = rand() % constants::WAR_CARD_COUNT;
+                    break;
+        }
+    }
+
+    draw_all(window_renderer);
+}
+
+void Grid::reset( SDL_Renderer* window_renderer, int n_mode ) {
+    mode = n_mode;
+    reset( window_renderer );
 }
 
 void Grid::draw_all( SDL_Renderer* window_renderer ) {
@@ -52,32 +81,7 @@ void Grid::draw_all( SDL_Renderer* window_renderer ) {
         rect.x = x * constants::SQ_SIZE;
         rect.y = y * constants::SQ_SIZE;
 
-        switch (mode) {
-            case conway: case langton:
-                color.r = 255 * t;
-                color.g = 255 * t;
-                color.b = 255 * t;
-                break;
-            case rps:
-                color.r = 0;
-                color.g = 0;
-                color.b = 0;
-
-                if (t == rock) color.r = 255;
-                else if (t == paper) color.g = 255;
-                else if (t == scissors) color.b = 255;
-                break;   
-            case war:
-                val = 255 * ( ( 1.0 * t) / 13 );
-                // color.r = 255 - val;
-                // color.g = val;
-                // color.b = val;
-                if (val > 255) std::cout << "huh?";
-                color.r = val;
-                color.g = val;
-                color.b = val;
-                break;
-        }
+        color = get_tile_color( id_from_pos(x, y), t );
 
         SDL_SetRenderDrawColor(window_renderer, color.r, color.g, color.b, 255);
         SDL_RenderDrawRect(window_renderer, &rect);
@@ -97,6 +101,37 @@ void Grid::draw_all( SDL_Renderer* window_renderer ) {
 
 }
 
+SDL_Color Grid::get_tile_color( int id, int tile_val ) {
+    SDL_Color out_color;
+    double val;
+
+    switch (mode) {
+        case conway: case langton:
+            out_color.r = 255 * tile_val;
+            out_color.g = 255 * tile_val;
+            out_color.b = 255 * tile_val;
+            break;
+        case rps:
+            out_color.r = 0;
+            out_color.g = 0;
+            out_color.b = 0;
+
+            if (tile_val == rock) out_color.r = 255;
+            else if (tile_val == paper) out_color.g = 255;
+            else if (tile_val == scissors) out_color.b = 255;
+            break;   
+        case war:
+            val = 255 * ( ( 1.0 * tile_val) / constants::WAR_CARD_COUNT );
+            // if (val > 255) std::cout << "huh?";
+            out_color.r = val;
+            out_color.g = val;
+            out_color.b = val;
+            break;
+    }
+
+    return out_color;
+}
+
 void Grid::draw_one( int x, int y, SDL_Renderer* window_renderer ) {
     SDL_Color color;
     SDL_Rect rect;
@@ -109,22 +144,7 @@ void Grid::draw_one( int x, int y, SDL_Renderer* window_renderer ) {
     int id = id_from_pos( x, y );
     int t = all_tiles[id];
 
-    switch (mode) {
-        case conway: case langton:
-            color.r = 255 * t;
-            color.g = 255 * t;
-            color.b = 255 * t;
-            break;
-        case rps:
-            color.r = 0;
-            color.g = 0;
-            color.b = 0;
-
-            if (t == 0) color.r = 255;
-            else if (t == 1) color.g = 255;
-            else if (t == 2) color.b = 255;
-            break;   
-    }
+    color = get_tile_color( id, t );
 
     SDL_SetRenderDrawColor(window_renderer, color.r, color.g, color.b, 255);
     SDL_RenderDrawRect(window_renderer, &rect);
@@ -318,7 +338,7 @@ void Grid::iterate_war() {
         else {
             all_tiles[i] ++;
             // make sure value isn't to big
-            all_tiles[i] = all_tiles[i] >= 13 ? 0 : all_tiles[i];
+            all_tiles[i] = all_tiles[i] >= constants::WAR_CARD_COUNT ? 0 : all_tiles[i];
         }
         
         // if (all_tiles[i] >= 13) std::cout << "val: " << all_tiles[i] << " ";

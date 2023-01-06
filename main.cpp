@@ -36,15 +36,15 @@ int main( int argc, char *argv[] ) {
     }
 
     if (TTF_Init() == -1) {
-        std::cout << "Error Loading font" << TTF_GetError() << "\n";
+        std::cout << "Error Loading Font" << TTF_GetError() << "\n";
         return EXIT_FAILURE;
     }
 
-    TTF_Font* arial = TTF_OpenFont("DMMono-Medium.ttf", 24);
+    TTF_Font* arial = TTF_OpenFont("DMMono-Medium.ttf", constants::FONT_SIZE);
     SDL_Surface* text_surface;
     SDL_Texture* text_texture;
 
-    Grid m_grid( Grid::war ); 
+    Grid m_grid( Grid::langton ); 
     m_grid.draw_all(m_window_renderer);
 
     Uint32 start_time, frame_time;
@@ -57,6 +57,23 @@ int main( int argc, char *argv[] ) {
         if (SDL_PollEvent(&event)) {
             if (event.type == SDL_QUIT) {
                 break;
+            }
+
+            if (event.type == SDL_KEYDOWN) {
+                // if (event.key.keysym.sym == SDLK_r) {
+                //     m_grid.reset();
+                // }
+                switch (event.key.keysym.sym) {
+                    case SDLK_r:
+                        m_grid.reset( m_window_renderer );
+                        break;
+                    case SDLK_1:
+                        m_grid.reset( m_window_renderer, Grid::conway );
+                        break;
+                    case SDLK_2:
+                        m_grid.reset( m_window_renderer, Grid::rps );
+                        break;
+                }
             }
         }
         start_time = SDL_GetTicks();
