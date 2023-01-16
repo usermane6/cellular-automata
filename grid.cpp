@@ -216,82 +216,49 @@ int Grid::dist_from_center( int x, int y ) {
 
 // --------- iterators ------------
 
-void Grid::iterate_conway() {
-    int id, num_alive;
-    int x = 0, y = 0;
-    std::copy(std::begin(all_tiles), std::end(all_tiles), std::begin(copy_of_tiles));
+void Grid::iterate_conway( int x, int y ) {
+    int num_alive;
+    int i = id_from_pos( x, y );
 
-    for (int i = 0; i < constants::T_TILES; i++) {
+    num_alive = alive_neighbors(x, y);
 
-        num_alive = alive_neighbors(x, y);
+    if (copy_of_tiles[1] == 0 && num_alive == 3) all_tiles[i] = 1;
+    else if (num_alive < 2 || num_alive > 3) all_tiles[i] = 0;
 
-        if (copy_of_tiles[1] == 0 && num_alive == 3) all_tiles[i] = 1;
-        else if (num_alive < 2 || num_alive > 3) all_tiles[i] = 0;
-
-        // manage positions
-        x++; 
-        if ( x >= constants::G_WIDTH ) {
-            x = 0;
-            y++;
-        } 
-    }
+    // manage positions
+        
 }
-
-void Grid::iterate_rps() {
-    int x = 0, y = 0;
+// todo merge rps and rand rps
+void Grid::iterate_rps( int x, int y ) {
+    int i = id_from_pos( x, y );
     int r, p, s;
     int thresh = constants::RPS_THRESHHOLD;
 
-    std::copy(std::begin(all_tiles), std::end(all_tiles), std::begin(copy_of_tiles));
-   
-    for (int i = 0; i < constants::T_TILES; i++) {
+    r = neighbors_with_value(x, y, rock); // amount of rock neighbors
+    p = neighbors_with_value(x, y, paper);
+    s = neighbors_with_value(x, y, scissors);
 
-        r = neighbors_with_value(x, y, rock); // amount of rock neighbors
-        p = neighbors_with_value(x, y, paper);
-        s = neighbors_with_value(x, y, scissors);
-
-        // compares and replaces
-        if (copy_of_tiles[i] == rock && p > thresh) all_tiles[i] = paper;
-        else if (copy_of_tiles[i] == paper && s > thresh) all_tiles[i] = scissors;
-        else if (copy_of_tiles[i] == scissors && r > thresh) all_tiles[i] = rock;
-
-        // manage positions
-        x++; 
-        if ( x >= constants::G_WIDTH ) {
-            x = 0;
-            y++;
-        } 
-
-    } 
+    // compares and replaces
+    if (copy_of_tiles[i] == rock && p > thresh) all_tiles[i] = paper;
+    else if (copy_of_tiles[i] == paper && s > thresh) all_tiles[i] = scissors;
+    else if (copy_of_tiles[i] == scissors && r > thresh) all_tiles[i] = rock;
 }
 
-void Grid::iterate_rand_rps() {
-    int x = 0, y = 0;
+void Grid::iterate_rand_rps( int x, int y ) {
+    int i = id_from_pos(x, y);
     int r, p, s, rand_val;
     int thresh = constants::RPS_THRESHHOLD;
-    
-    std::copy(std::begin(all_tiles), std::end(all_tiles), std::begin(copy_of_tiles));
-   
-    for (int i = 0; i < constants::T_TILES; i++) {
 
-        r = neighbors_with_value(x, y, 0);
-        p = neighbors_with_value(x, y, 1);
-        s = neighbors_with_value(x, y, 2);
+    //todo replace neighbors with value with 3 filter rather than single - only do one loop each function call
+    r = neighbors_with_value(x, y, 0);
+    p = neighbors_with_value(x, y, 1);
+    s = neighbors_with_value(x, y, 2);
 
-        rand_val = rand() % 3;
+    rand_val = rand() % 3;
 
-        if (copy_of_tiles[i] == 0 && p > thresh + rand_val) all_tiles[i] = 1;
-        else if (copy_of_tiles[i] == 1 && s > thresh + rand_val) all_tiles[i] = 2;
-        else if (copy_of_tiles[i] == 2 && r > thresh + rand_val) all_tiles[i] = 0;
-
-        x++; 
-    
-        if ( x >= constants::G_WIDTH ) {
-            x = 0;
-            y++;
-        } 
-
-    } 
+    if (copy_of_tiles[i] == 0 && p > thresh + rand_val) all_tiles[i] = 1;
+    else if (copy_of_tiles[i] == 1 && s > thresh + rand_val) all_tiles[i] = 2;
+    else if (copy_of_tiles[i] == 2 && r > thresh + rand_val) all_tiles[i] = 0;
 }
 
 void Grid::iterate_langton( SDL_Renderer* window_renderer ) {
@@ -312,6 +279,7 @@ void Grid::iterate_langton( SDL_Renderer* window_renderer ) {
             move_ant();
 
             break;
+
         case 1:
              // turn right on white tile
             all_tiles[ant_id] = 0;
@@ -324,53 +292,50 @@ void Grid::iterate_langton( SDL_Renderer* window_renderer ) {
     }
 }
 
-void Grid::iterate_war() {
-    int x = 0, y = 0;
+void Grid::iterate_war( int x, int y ) {
     int greater_neighbors;
+    int i = id_from_pos(x, y);
 
+    greater_neighbors = neighbors_with_value(x, y, copy_of_tiles[i], true);
+
+    if (greater_neighbors <= constants::WAR_THRESHHOLD) all_tiles[i]--; 
+    else {
+        all_tiles[i] ++;
+        // make sure value isn't to big
+        all_tiles[i] = all_tiles[i] >= constants::WAR_CARD_COUNT ? 0 : all_tiles[i];
+    }
+}
+
+void Grid::iterate( SDL_Renderer* window_renderer ) {
+    // todo cleanup
+    int x = 0, y = 0;
     std::copy(std::begin(all_tiles), std::end(all_tiles), std::begin(copy_of_tiles));
 
+    if (mode == langton) {
+        iterate_langton(window_renderer);
+        return;
+    }
+
     for (int i = 0; i < constants::T_TILES; i++) {
+        switch (mode) {
+            case conway:
+                iterate_conway( x, y );
+                break;
+            case rps:
+                iterate_rps( x, y );
+                break;
+            case war: 
+                iterate_war( x, y );
+                break;
+        } 
 
-        greater_neighbors = neighbors_with_value(x, y, copy_of_tiles[i], true);
-
-        if (greater_neighbors <= constants::WAR_THRESHHOLD) all_tiles[i]--; 
-        else {
-            all_tiles[i] ++;
-            // make sure value isn't to big
-            all_tiles[i] = all_tiles[i] >= constants::WAR_CARD_COUNT ? 0 : all_tiles[i];
-        }
-        
-        // if (all_tiles[i] >= 13) std::cout << "val: " << all_tiles[i] << " ";
-
-        // manage x,y positions
         x++;    
         if ( x >= constants::G_WIDTH ) {
             x = 0;
             y++;
         } 
     }
-}
-
-void Grid::iterate( SDL_Renderer* window_renderer ) {
-    // todo cleanup
-    switch (mode) {
-        case conway:
-            iterate_conway();
-            draw_all(window_renderer);
-            break;
-        case rps:
-            iterate_rps();
-            draw_all(window_renderer);
-            break;
-        case langton:
-            iterate_langton(window_renderer);
-            break;
-        case war: 
-            iterate_war();
-            draw_all(window_renderer);
-            break;
-    } 
+    draw_all(window_renderer);
 }
 
 // ----- Langtons ant methods -----

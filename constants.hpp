@@ -2,8 +2,8 @@
 #define CONSTANTS_H
 
 namespace constants {
-    constexpr int W_HEIGHT { 1000 }; // window height in pixels
-    constexpr int W_WIDTH { 1000 }; // window width in pixels
+    constexpr int W_HEIGHT { 500 }; // window height in pixels
+    constexpr int W_WIDTH { 500 }; // window width in pixels
 
     constexpr int SQ_SIZE { 5 }; // size of each tile, they should be squares 
 
@@ -28,6 +28,10 @@ namespace constants {
         }; 
 
     constexpr int  FONT_SIZE = 20;
+}
+
+namespace colors {
+
 }
 
 #endif

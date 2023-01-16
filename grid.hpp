@@ -6,6 +6,7 @@
 #include "SDL2/SDL.h"
 
 //todo cleanup | organizaion
+//todo id to pos function
 
 class Grid {
     private:
@@ -42,11 +43,11 @@ class Grid {
         // 
         SDL_Color get_tile_color( int id, int t );
         // iterates to a new generation using the ruleset of Conway's Game of Life
-        void iterate_conway();
+        void iterate_conway( int x, int y );
         // iterates using rock paper scissors rules
-        void iterate_rps();
+        void iterate_rps( int x, int y );
         // iterates using rps, but randomly increases threshold
-        void iterate_rand_rps();
+        void iterate_rand_rps( int x, int y );
 
         // iterates using langtons ant
         void iterate_langton( SDL_Renderer * window_renderer );
@@ -60,7 +61,7 @@ class Grid {
         for each tile, checks if it wins a certain amount of games against the neighbors 
         then adjusts the value of tile 
         */
-        void iterate_war();
+        void iterate_war( int x, int y );
 
     public:
 

@@ -40,11 +40,11 @@ int main( int argc, char *argv[] ) {
         return EXIT_FAILURE;
     }
 
-    TTF_Font* arial = TTF_OpenFont("DMMono-Medium.ttf", constants::FONT_SIZE);
+    TTF_Font* arial = TTF_OpenFont("assets/DMMono-Medium.ttf", constants::FONT_SIZE);
     SDL_Surface* text_surface;
     SDL_Texture* text_texture;
 
-    Grid m_grid( Grid::langton ); 
+    Grid m_grid( Grid::rps ); 
     m_grid.draw_all(m_window_renderer);
 
     Uint32 start_time, frame_time;
@@ -60,9 +60,6 @@ int main( int argc, char *argv[] ) {
             }
 
             if (event.type == SDL_KEYDOWN) {
-                // if (event.key.keysym.sym == SDLK_r) {
-                //     m_grid.reset();
-                // }
                 switch (event.key.keysym.sym) {
                     case SDLK_r:
                         m_grid.reset( m_window_renderer );
@@ -72,6 +69,9 @@ int main( int argc, char *argv[] ) {
                         break;
                     case SDLK_2:
                         m_grid.reset( m_window_renderer, Grid::rps );
+                        break;
+                    case SDLK_3:
+                        m_grid.reset( m_window_renderer, Grid::war );
                         break;
                 }
             }
@@ -84,7 +84,10 @@ int main( int argc, char *argv[] ) {
         
         fps = (frame_time > 0) ? 1000.0 / frame_time : 0.0;
         fps_avg = fps_avg == 0 ? fps : (fps_avg + fps) / 2;
-        display_fps(fps, m_window_renderer, arial, text_surface, text_texture);
+        display_fps(fps_avg, m_window_renderer, arial, text_surface, text_texture);
+
+        SDL_GetTicks();
+        
     }
 
     std::cout << "Average Fps: " << fps_avg;
