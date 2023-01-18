@@ -1,7 +1,7 @@
 #ifndef GRID_H
 #define GRID_H
 
-#include "constants.hpp"
+#include "constants.h"
 
 #include "SDL2/SDL.h"
 
@@ -29,6 +29,7 @@ class Grid {
         int id_from_pos( int pos[2] );
         // checks if a given position is in the bounds of the array
 
+        int* pos_from_id( int id, int* pos );
 
         bool is_in_bounds( int x, int y);
         // returns the number of neighbors with value 1
@@ -68,7 +69,8 @@ class Grid {
         // enums enums enums!!!
         // different drawing methods
         enum draw_modes {
-            conway = 0,
+            gradient = 0,
+            conway,
             rps,
             langton,
             war,
@@ -84,12 +86,12 @@ class Grid {
 
         Grid( int n_mode );
         // calls the draw function for every tile in the all_tiles array
-        void draw_all( SDL_Renderer *window_renderer );
+        void draw_all( SDL_Renderer* window_renderer );
         // creates a new iteration 
-        void iterate( SDL_Renderer * window_renderer );
+        void iterate( SDL_Renderer* window_renderer );
 
-        void reset( SDL_Renderer *window_renderer );
-        void reset( SDL_Renderer *window_renderer, int n_mode );
+        void reset( SDL_Renderer* window_renderer );
+        void reset( SDL_Renderer* window_renderer, int n_mode );
 
 };
 

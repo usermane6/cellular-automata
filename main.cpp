@@ -2,8 +2,8 @@
 #include <SDL2/SDL.h>
 #include "SDL2/SDL_ttf.h"
 
-#include "grid.hpp"
-#include "constants.hpp"
+#include "grid.h"
+#include "constants.h"
 
 void display_fps(double fps, SDL_Renderer* window_renderer, TTF_Font* font, SDL_Surface* surface, SDL_Texture* texture) {
     // todo cleanup
@@ -44,7 +44,7 @@ int main( int argc, char *argv[] ) {
     SDL_Surface* text_surface;
     SDL_Texture* text_texture;
 
-    Grid m_grid( Grid::rps ); 
+    Grid m_grid( Grid::gradient ); 
     m_grid.draw_all(m_window_renderer);
 
     Uint32 start_time, frame_time;

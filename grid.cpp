@@ -1,5 +1,5 @@
-#include "grid.hpp"
-#include "constants.hpp"
+#include "grid.h"
+#include "constants.h"
 
 #include "SDL2/SDL.h"
 
@@ -14,26 +14,35 @@
 Grid::Grid( int n_mode ) {
 
     mode = n_mode;
+    int* pos = new int[2];
+    int y, val;
 
     for (int i = 0; i < constants::T_TILES; i ++) {
-            switch ( mode ) {
-                case conway :
-                    all_tiles[i] = rand() % 2;
-                    break;
-                case rps :
-                    all_tiles[i] = rand() % 3;
-                    break;
-                case langton:
-                    all_tiles[i] = 1;
-                    break;
-                case war:
-                    all_tiles[i] = rand() % constants::WAR_CARD_COUNT;
-                    break;
+        switch ( mode ) {
+            case gradient:
+                y = pos_from_id(i, pos)[1];
+                all_tiles[i] = std::round(100 * ( (y * 1.0) / (constants::G_HEIGHT * 1.0 - 1)));
+                break;
+            case conway:
+                all_tiles[i] = rand() % 2;
+                break;
+            case rps:
+                all_tiles[i] = rand() % 3;
+                break;
+            case langton:
+                all_tiles[i] = 1;
+                break;
+            case war:
+                all_tiles[i] = rand() % constants::WAR_CARD_COUNT;
+                break;
         }
+        // std::cout << (int)std::round(100 * ( (y * 1.0) / (constants::G_HEIGHT * 1.0 - 1))) << " ";
+        // std::cout << "x: " << pos[0] << "  y: " << pos[1] << "  i: " << i << "\n";
+        // std::cout << id_from_pos( pos_from_id(i, pos ) ) << "  " << i << std::endl;
     }
 }
 
-void Grid::reset( SDL_Renderer *window_renderer ) {
+void Grid::reset( SDL_Renderer* window_renderer ) {
 
     ant_pos[0] = constants::G_CENTER[0] * 1; 
     ant_pos[1] = constants::G_CENTER[1] * 1;
@@ -106,11 +115,16 @@ SDL_Color Grid::get_tile_color( int id, int tile_val ) {
     double val;
 
     switch (mode) {
+        case gradient:
+            val = 255 * ( (1.0 * tile_val) / 100);
+            out_color.r = val;
+            break;
         case conway: case langton:
             out_color.r = 255 * tile_val;
             out_color.g = 255 * tile_val;
             out_color.b = 255 * tile_val;
             break;
+
         case rps:
             out_color.r = 0;
             out_color.g = 0;
@@ -119,7 +133,8 @@ SDL_Color Grid::get_tile_color( int id, int tile_val ) {
             if (tile_val == rock) out_color.r = 255;
             else if (tile_val == paper) out_color.g = 255;
             else if (tile_val == scissors) out_color.b = 255;
-            break;   
+            break;  
+
         case war:
             val = 255 * ( ( 1.0 * tile_val) / constants::WAR_CARD_COUNT );
             // if (val > 255) std::cout << "huh?";
@@ -161,6 +176,12 @@ int Grid::id_from_pos( int x, int y ) {
 int Grid::id_from_pos( int pos[2] ) {
     if (!is_in_bounds( pos[0], pos[1] )) { return -1; }
     return ((constants::G_WIDTH - 1) * pos[1]) + pos[0] + pos[1];
+}
+
+int* Grid::pos_from_id( int id, int* pos ) {
+    pos[0] = (id) % constants::G_WIDTH;
+    pos[1] = ( ( (id) - pos[0] ) / constants::G_WIDTH );
+    return pos;
 }
 
 bool Grid::is_in_bounds( int x, int y ) {
@@ -307,7 +328,6 @@ void Grid::iterate_war( int x, int y ) {
 }
 
 void Grid::iterate( SDL_Renderer* window_renderer ) {
-    // todo cleanup
     int x = 0, y = 0;
     std::copy(std::begin(all_tiles), std::end(all_tiles), std::begin(copy_of_tiles));
 
@@ -315,7 +335,7 @@ void Grid::iterate( SDL_Renderer* window_renderer ) {
         iterate_langton(window_renderer);
         return;
     }
-
+    // todo make foreach loop here
     for (int i = 0; i < constants::T_TILES; i++) {
         switch (mode) {
             case conway:
