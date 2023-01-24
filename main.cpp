@@ -73,6 +73,9 @@ int main( int argc, char *argv[] ) {
                     case SDLK_3:
                         m_grid.reset( m_window_renderer, Grid::war );
                         break;
+                    case SDLK_4:
+                        m_grid.reset( m_window_renderer, Grid::langton );
+                        break;
                 }
             }
         }

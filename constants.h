@@ -1,11 +1,14 @@
 #ifndef CONSTANTS_H
 #define CONSTANTS_H
 
-namespace constants {
-    constexpr int W_HEIGHT { 500 }; // window height in pixels
-    constexpr int W_WIDTH { 500 }; // window width in pixels
+#include <SDL2/SDL.h>
+#include "gradient.h" 
 
-    constexpr int SQ_SIZE { 10 }; // size of each tile, they should be squares 
+namespace constants {
+    constexpr int W_HEIGHT { 800 }; // window height in pixels
+    constexpr int W_WIDTH { 800 }; // window width in pixels
+
+    constexpr int SQ_SIZE { 8 }; // size of each tile, they should be squares 
 
     constexpr int G_HEIGHT { W_HEIGHT / SQ_SIZE }; // tiles in each column ~ grid height
     constexpr int G_WIDTH { W_WIDTH / SQ_SIZE }; // tiles in each row ~ grid width
@@ -14,8 +17,9 @@ namespace constants {
 
     constexpr int RPS_THRESHHOLD { 3 }; // amount of rps losses required to change color
 
-    constexpr int WAR_THRESHHOLD { 6 }; // amount of war losses 
-    constexpr int WAR_CARD_COUNT { 50 }; // amount of different cards in a "deck" of cards
+    constexpr int WAR_THRESHHOLD { 5 }; // amount of war losses 
+    constexpr int WAR_CAP { 6 };
+    constexpr int WAR_CARD_COUNT { 100 }; // amount of different cards in a "deck" of cards
 
     constexpr int W_CENTER[2] { W_WIDTH / 2, W_HEIGHT / 2 }; // center in terms of pixels, window center
     constexpr int G_CENTER[2] { G_WIDTH / 2, G_HEIGHT / 2 }; // center in terms of grid tiles, grid center
@@ -28,6 +32,13 @@ namespace constants {
         }; 
 
     constexpr int  FONT_SIZE = 20;
+
+    const SDL_Color t_color1 = {255, 3, 192};
+    const SDL_Color t_color2 = {20, 0, 100};
+}
+
+namespace colors {
+    
 }
 
 #endif

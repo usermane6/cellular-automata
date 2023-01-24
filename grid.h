@@ -2,6 +2,7 @@
 #define GRID_H
 
 #include "constants.h"
+#include "gradient.h"
 
 #include "SDL2/SDL.h"
 
@@ -13,6 +14,7 @@ class Grid {
         int mode; // what mode to render the colors
         int all_tiles[ constants::T_TILES ] = {}; // contains all tiles in the grid
         int copy_of_tiles[ constants::T_TILES ]; // clone of all tiles, used for making new generations/iterating
+        Gradient t_grad;
 
         // ------ Langton's ant variables -------
 

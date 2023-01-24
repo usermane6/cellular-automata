@@ -1,5 +1,6 @@
 #include "grid.h"
 #include "constants.h"
+#include "gradient.h"
 
 #include "SDL2/SDL.h"
 
@@ -15,7 +16,8 @@ Grid::Grid( int n_mode ) {
 
     mode = n_mode;
     int* pos = new int[2];
-    int y, val;
+    int y;
+    t_grad.set_colors(constants::t_color1, constants::t_color2);
 
     for (int i = 0; i < constants::T_TILES; i ++) {
         switch ( mode ) {
@@ -116,9 +118,10 @@ SDL_Color Grid::get_tile_color( int id, int tile_val ) {
 
     switch (mode) {
         case gradient:
-            val = 255 * ( (1.0 * tile_val) / 100);
-            out_color.r = val;
+            val = (1.0 * tile_val) / 100;
+            out_color = t_grad.get_mid_color(val);
             break;
+
         case conway: case langton:
             out_color.r = 255 * tile_val;
             out_color.g = 255 * tile_val;
@@ -136,11 +139,9 @@ SDL_Color Grid::get_tile_color( int id, int tile_val ) {
             break;  
 
         case war:
-            val = 255 * ( ( 1.0 * tile_val) / constants::WAR_CARD_COUNT );
-            // if (val > 255) std::cout << "huh?";
-            out_color.r = val;
-            out_color.g = val;
-            out_color.b = val;
+            val = ( 1.0 * tile_val) / constants::WAR_CARD_COUNT;
+            if (val > 1 or val < 0) std::cout << "issue: " << tile_val << "\n";
+            out_color = t_grad.get_mid_color(val);
             break;
     }
 
@@ -319,12 +320,9 @@ void Grid::iterate_war( int x, int y ) {
 
     greater_neighbors = neighbors_with_value(x, y, copy_of_tiles[i], true);
 
-    if (greater_neighbors <= constants::WAR_THRESHHOLD) all_tiles[i]--; 
-    else {
-        all_tiles[i] ++;
-        // make sure value isn't to big
-        all_tiles[i] = all_tiles[i] >= constants::WAR_CARD_COUNT ? 0 : all_tiles[i];
-    }
+    if (greater_neighbors >= constants::WAR_THRESHHOLD and greater_neighbors <= constants::WAR_CAP) {
+        all_tiles[i] = rand() % constants::WAR_CARD_COUNT;
+    } 
 }
 
 void Grid::iterate( SDL_Renderer* window_renderer ) {
