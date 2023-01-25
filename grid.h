@@ -14,6 +14,7 @@ class Grid {
         int mode; // what mode to render the colors
         int all_tiles[ constants::T_TILES ] = {}; // contains all tiles in the grid
         int copy_of_tiles[ constants::T_TILES ]; // clone of all tiles, used for making new generations/iterating
+        bool do_update[ constants::T_TILES ];
         Gradient t_grad;
 
         // ------ Langton's ant variables -------
@@ -49,6 +50,8 @@ class Grid {
         void iterate_conway( int x, int y );
         // iterates using rock paper scissors rules
         void iterate_rps( int x, int y );
+
+        void iterate_true_rps( int x, int y );
         // iterates using rps, but randomly increases threshold
         void iterate_rand_rps( int x, int y );
 

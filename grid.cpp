@@ -17,9 +17,10 @@ Grid::Grid( int n_mode ) {
     mode = n_mode;
     int* pos = new int[2];
     int y;
-    t_grad.set_colors(constants::t_color1, constants::t_color2);
+    t_grad.set_colors(colors::t_color1, colors::t_color2);
 
     for (int i = 0; i < constants::T_TILES; i ++) {
+        do_update[i] = true;
         switch ( mode ) {
             case gradient:
                 y = pos_from_id(i, pos)[1];
@@ -29,7 +30,7 @@ Grid::Grid( int n_mode ) {
                 all_tiles[i] = rand() % 2;
                 break;
             case rps:
-                all_tiles[i] = rand() % 3;
+                all_tiles[i] = rand() % constants::RPS_COLORS;
                 break;
             case langton:
                 all_tiles[i] = 1;
@@ -55,7 +56,7 @@ void Grid::reset( SDL_Renderer* window_renderer ) {
                     all_tiles[i] = rand() % 2;
                     break;
                 case rps :
-                    all_tiles[i] = rand() % 3;
+                    all_tiles[i] = rand() % constants::RPS_COLORS;
                     break;
                 case langton:
                     all_tiles[i] = 1;
@@ -81,26 +82,27 @@ void Grid::draw_all( SDL_Renderer* window_renderer ) {
     rect.h = constants::SQ_SIZE;
     rect.w = constants::SQ_SIZE;
 
-    int x = 0, y = 0;
+    int x = 0, y = 0, t;
 
     double val;
 
-    for (int t : all_tiles) {
+    for (int i = 0; i < constants::T_TILES; i++) {
+        if (do_update[i]) {
+            t = all_tiles[i];
+            // std::cout << t << " ";
 
-        // std::cout << t << " ";
+            rect.x = x * constants::SQ_SIZE;
+            rect.y = y * constants::SQ_SIZE;
 
-        rect.x = x * constants::SQ_SIZE;
-        rect.y = y * constants::SQ_SIZE;
+            color = get_tile_color( i, t );
 
-        color = get_tile_color( id_from_pos(x, y), t );
-
-        SDL_SetRenderDrawColor(window_renderer, color.r, color.g, color.b, 255);
-        SDL_RenderDrawRect(window_renderer, &rect);
-        SDL_RenderFillRect(window_renderer, &rect);
-        SDL_SetRenderDrawColor(window_renderer, 0, 0, 0, 255);
+            SDL_SetRenderDrawColor(window_renderer, color.r, color.g, color.b, 255);
+            SDL_RenderDrawRect(window_renderer, &rect);
+            SDL_RenderFillRect(window_renderer, &rect);
+            SDL_SetRenderDrawColor(window_renderer, 0, 0, 0, 255);
+        }
 
         x++; 
-
         if ( x >= constants::G_WIDTH ) {
             x = 0;
             y++;
@@ -129,13 +131,7 @@ SDL_Color Grid::get_tile_color( int id, int tile_val ) {
             break;
 
         case rps:
-            out_color.r = 0;
-            out_color.g = 0;
-            out_color.b = 0;
-
-            if (tile_val == rock) out_color.r = 255;
-            else if (tile_val == paper) out_color.g = 255;
-            else if (tile_val == scissors) out_color.b = 255;
+            out_color = colors::rps_colors[tile_val];
             break;  
 
         case war:
@@ -250,20 +246,32 @@ void Grid::iterate_conway( int x, int y ) {
     // manage positions
         
 }
-// todo merge rps and rand rps
+// // todo merge rps and rand rps
+// void Grid::iterate_rps( int x, int y ) {
+//     int i = id_from_pos( x, y );
+//     int r, p, s;
+//     int thresh = constants::RPS_THRESHHOLD;
+
+//     r = neighbors_with_value(x, y, rock); // amount of rock neighbors
+//     p = neighbors_with_value(x, y, paper);
+//     s = neighbors_with_value(x, y, scissors);
+
+//     // compares and replaces
+//     if (copy_of_tiles[i] == rock && p > thresh) all_tiles[i] = paper;
+//     else if (copy_of_tiles[i] == paper && s > thresh) all_tiles[i] = scissors;
+//     else if (copy_of_tiles[i] == scissors && r > thresh) all_tiles[i] = rock;
+// }
+
+
 void Grid::iterate_rps( int x, int y ) {
     int i = id_from_pos( x, y );
-    int r, p, s;
-    int thresh = constants::RPS_THRESHHOLD;
 
-    r = neighbors_with_value(x, y, rock); // amount of rock neighbors
-    p = neighbors_with_value(x, y, paper);
-    s = neighbors_with_value(x, y, scissors);
+    int beating_value = all_tiles[i] == constants::RPS_COLORS -1 ? 0 : all_tiles[i] + 1;
+    int better_neighbors = neighbors_with_value( x, y, beating_value );
 
-    // compares and replaces
-    if (copy_of_tiles[i] == rock && p > thresh) all_tiles[i] = paper;
-    else if (copy_of_tiles[i] == paper && s > thresh) all_tiles[i] = scissors;
-    else if (copy_of_tiles[i] == scissors && r > thresh) all_tiles[i] = rock;
+    if (better_neighbors > constants::RPS_THRESHHOLD) {
+        all_tiles[i] = beating_value;
+    }
 }
 
 void Grid::iterate_rand_rps( int x, int y ) {
@@ -346,6 +354,8 @@ void Grid::iterate( SDL_Renderer* window_renderer ) {
                 iterate_war( x, y );
                 break;
         } 
+
+        do_update[i] = all_tiles[i] != copy_of_tiles[i];
 
         x++;    
         if ( x >= constants::G_WIDTH ) {

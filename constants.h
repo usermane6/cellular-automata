@@ -5,10 +5,10 @@
 #include "gradient.h" 
 
 namespace constants {
-    constexpr int W_HEIGHT { 800 }; // window height in pixels
-    constexpr int W_WIDTH { 800 }; // window width in pixels
+    constexpr int W_HEIGHT { 900 }; // window height in pixels
+    constexpr int W_WIDTH { 900 }; // window width in pixels
 
-    constexpr int SQ_SIZE { 8 }; // size of each tile, they should be squares 
+    constexpr int SQ_SIZE { 2 }; // size of each tile, they should be squares 
 
     constexpr int G_HEIGHT { W_HEIGHT / SQ_SIZE }; // tiles in each column ~ grid height
     constexpr int G_WIDTH { W_WIDTH / SQ_SIZE }; // tiles in each row ~ grid width
@@ -16,6 +16,7 @@ namespace constants {
     constexpr int T_TILES { G_HEIGHT * G_WIDTH }; // total number of tiles in the grid array
 
     constexpr int RPS_THRESHHOLD { 3 }; // amount of rps losses required to change color
+    constexpr int RPS_COLORS { 3 };
 
     constexpr int WAR_THRESHHOLD { 5 }; // amount of war losses 
     constexpr int WAR_CAP { 6 };
@@ -32,13 +33,24 @@ namespace constants {
         }; 
 
     constexpr int  FONT_SIZE = 20;
-
-    const SDL_Color t_color1 = {255, 3, 192};
-    const SDL_Color t_color2 = {20, 0, 100};
 }
 
 namespace colors {
-    
+    const SDL_Color t_color1 = {255, 3, 192};
+    const SDL_Color t_color2 = {20, 0, 100};
+
+    const SDL_Color rps_colors[10] = {
+        {250, 218, 102},
+        {100, 54, 156},
+        {196, 149, 61},
+        {105, 67, 117},
+        {186, 35, 156},
+        {66, 2, 79},
+        {49, 23, 179},
+        {71, 179, 162},
+        {28, 230, 149},
+        {242, 148, 61},
+    };
 }
 
 #endif

@@ -44,7 +44,7 @@ int main( int argc, char *argv[] ) {
     SDL_Surface* text_surface;
     SDL_Texture* text_texture;
 
-    Grid m_grid( Grid::gradient ); 
+    Grid m_grid( Grid::rps ); 
     m_grid.draw_all(m_window_renderer);
 
     Uint32 start_time, frame_time;
@@ -87,7 +87,7 @@ int main( int argc, char *argv[] ) {
         
         fps = (frame_time > 0) ? 1000.0 / frame_time : 0.0;
         fps_avg = fps_avg == 0 ? fps : (fps_avg + fps) / 2;
-        display_fps(fps_avg, m_window_renderer, arial, text_surface, text_texture);
+        // display_fps(fps_avg, m_window_renderer, arial, text_surface, text_texture);
 
         SDL_GetTicks();
         
