@@ -11,8 +11,21 @@
 // TODO make single tile a certain value
 // TODO fixed shapes?
 
+SDL_Color random_color() {
+    SDL_Color new_color = {};
+    new_color.r = rand() % 255;
+    new_color.g = rand() % 255;
+    new_color.b = rand() % 255;
+    return new_color;
+}
+
+SDL_Color all_colors[101] = {};
 
 Grid::Grid( int n_mode ) {
+
+    for(int c = 0; c < 101; c++){ 
+        all_colors[c] = random_color();
+    };
 
     mode = n_mode;
     int* pos = new int[2];
@@ -51,19 +64,20 @@ void Grid::reset( SDL_Renderer* window_renderer ) {
     ant_pos[1] = constants::G_CENTER[1] * 1;
 
     for (int i = 0; i < constants::T_TILES; i ++) {
-            switch ( mode ) {
-                case conway :
-                    all_tiles[i] = rand() % 2;
-                    break;
-                case rps :
-                    all_tiles[i] = rand() % constants::RPS_COLORS;
-                    break;
-                case langton:
-                    all_tiles[i] = 1;
-                    break;
-                case war:
-                    all_tiles[i] = rand() % constants::WAR_CARD_COUNT;
-                    break;
+        do_update[i] = true;
+        switch ( mode ) {
+            case conway :
+                all_tiles[i] = rand() % 2;
+                break;
+            case rps :
+                all_tiles[i] = rand() % constants::RPS_COLORS;
+                break;
+            case langton:
+                all_tiles[i] = 1;
+                break;
+            case war:
+                all_tiles[i] = rand() % constants::WAR_CARD_COUNT;
+                break;
         }
     }
 
@@ -131,7 +145,8 @@ SDL_Color Grid::get_tile_color( int id, int tile_val ) {
             break;
 
         case rps:
-            out_color = colors::rps_colors[tile_val];
+            out_color = colors::alt_colors[tile_val];
+            // out_color = all_colors[tile_val];
             break;  
 
         case war:
@@ -271,6 +286,26 @@ void Grid::iterate_rps( int x, int y ) {
 
     if (better_neighbors > constants::RPS_THRESHHOLD) {
         all_tiles[i] = beating_value;
+    }
+}
+
+void Grid::iterate_true_rps( int x, int y ) {
+    //todo cleanup
+    int i = id_from_pos( x, y );
+    int beats_next = (constants::RPS_COLORS - 1) / 2;
+    int best_winner[2] = {0, 0};
+
+    for (int check_val = 1; check_val <= beats_next; check_val++) {
+        int beating_value = (all_tiles[i] + check_val) % constants::RPS_COLORS; 
+        int better_neighbors = neighbors_with_value(x, y, beating_value);
+        if (better_neighbors >= best_winner[1]) {
+            best_winner[0] = beating_value; 
+            best_winner[1] = better_neighbors;
+        }
+    }
+
+    if (best_winner[1] > constants::RPS_THRESHHOLD) {
+        all_tiles[i] = best_winner[0];
     }
 }
 

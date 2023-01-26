@@ -15,8 +15,8 @@ namespace constants {
 
     constexpr int T_TILES { G_HEIGHT * G_WIDTH }; // total number of tiles in the grid array
 
-    constexpr int RPS_THRESHHOLD { 3 }; // amount of rps losses required to change color
-    constexpr int RPS_COLORS { 3 };
+    constexpr int RPS_THRESHHOLD { 2 }; // amount of rps losses required to change color
+    constexpr int RPS_COLORS { 5 };
 
     constexpr int WAR_THRESHHOLD { 5 }; // amount of war losses 
     constexpr int WAR_CAP { 6 };
@@ -50,6 +50,15 @@ namespace colors {
         {71, 179, 162},
         {28, 230, 149},
         {242, 148, 61},
+    };
+
+    const SDL_Color alt_colors[6] = {
+        {255, 255, 255},
+        {215, 36, 131},
+        {191, 192, 192},
+        {45, 49, 66},
+        {239, 131, 84},
+        {79, 93, 117},
     };
 }
 

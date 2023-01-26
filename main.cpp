@@ -86,8 +86,8 @@ int main( int argc, char *argv[] ) {
         frame_time = SDL_GetTicks() - start_time;
         
         fps = (frame_time > 0) ? 1000.0 / frame_time : 0.0;
-        fps_avg = fps_avg == 0 ? fps : (fps_avg + fps) / 2;
-        // display_fps(fps_avg, m_window_renderer, arial, text_surface, text_texture);
+        fps_avg = fps_avg == 0 ? fps : ((fps_avg + fps) / 2);
+        display_fps(fps, m_window_renderer, arial, text_surface, text_texture);
 
         SDL_GetTicks();
         
