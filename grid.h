@@ -77,6 +77,7 @@ class Grid {
             gradient = 0,
             conway,
             rps,
+            rps_true,
             langton,
             war,
         };

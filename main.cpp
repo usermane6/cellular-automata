@@ -52,6 +52,9 @@ int main( int argc, char *argv[] ) {
 
     SDL_Event event;
 
+    bool show_fps = false;
+    bool paused = false;
+
     // main loop 
     while (true) {
         if (SDL_PollEvent(&event)) {
@@ -76,18 +79,28 @@ int main( int argc, char *argv[] ) {
                     case SDLK_4:
                         m_grid.reset( m_window_renderer, Grid::langton );
                         break;
+                    case SDLK_5:
+                        m_grid.reset( m_window_renderer, Grid::rps_true );
+                        break;
+                    case SDLK_SPACE:
+                        paused = !paused;
+                        break;
+                    case SDLK_f:
+                        show_fps = !show_fps;
+                        break;
                 }
             }
         }
         start_time = SDL_GetTicks();
 
-        m_grid.iterate(m_window_renderer);
+        if (!paused) m_grid.iterate(m_window_renderer);
 
         frame_time = SDL_GetTicks() - start_time;
         
         fps = (frame_time > 0) ? 1000.0 / frame_time : 0.0;
         fps_avg = fps_avg == 0 ? fps : ((fps_avg + fps) / 2);
-        display_fps(fps, m_window_renderer, arial, text_surface, text_texture);
+
+        if (!show_fps) display_fps(fps, m_window_renderer, arial, text_surface, text_texture);
 
         SDL_GetTicks();
         

@@ -18,9 +18,9 @@ namespace constants {
     constexpr int RPS_THRESHHOLD { 2 }; // amount of rps losses required to change color
     constexpr int RPS_COLORS { 5 };
 
-    constexpr int WAR_THRESHHOLD { 5 }; // amount of war losses 
-    constexpr int WAR_CAP { 6 };
-    constexpr int WAR_CARD_COUNT { 100 }; // amount of different cards in a "deck" of cards
+    constexpr int WAR_THRESHHOLD { 4 }; // amount of war losses 
+    constexpr int WAR_CAP { 7 };
+    constexpr int WAR_CARD_COUNT { 10 }; // amount of different cards in a "deck" of cards
 
     constexpr int W_CENTER[2] { W_WIDTH / 2, W_HEIGHT / 2 }; // center in terms of pixels, window center
     constexpr int G_CENTER[2] { G_WIDTH / 2, G_HEIGHT / 2 }; // center in terms of grid tiles, grid center

@@ -42,7 +42,7 @@ Grid::Grid( int n_mode ) {
             case conway:
                 all_tiles[i] = rand() % 2;
                 break;
-            case rps:
+            case rps: case rps_true:
                 all_tiles[i] = rand() % constants::RPS_COLORS;
                 break;
             case langton:
@@ -69,7 +69,7 @@ void Grid::reset( SDL_Renderer* window_renderer ) {
             case conway :
                 all_tiles[i] = rand() % 2;
                 break;
-            case rps :
+            case rps: case rps_true:
                 all_tiles[i] = rand() % constants::RPS_COLORS;
                 break;
             case langton:
@@ -144,7 +144,7 @@ SDL_Color Grid::get_tile_color( int id, int tile_val ) {
             out_color.b = 255 * tile_val;
             break;
 
-        case rps:
+        case rps: case rps_true:
             out_color = colors::alt_colors[tile_val];
             // out_color = all_colors[tile_val];
             break;  
@@ -357,15 +357,27 @@ void Grid::iterate_langton( SDL_Renderer* window_renderer ) {
     }
 }
 
+// void Grid::iterate_war( int x, int y ) {
+//     int greater_neighbors;
+//     int i = id_from_pos(x, y);
+
+//     greater_neighbors = neighbors_with_value(x, y, copy_of_tiles[i], true);
+
+//     if (greater_neighbors >= constants::WAR_THRESHHOLD and greater_neighbors <= constants::WAR_CAP) {
+//         all_tiles[i] = rand() % constants::WAR_CARD_COUNT;
+//     } 
+// }
+
 void Grid::iterate_war( int x, int y ) {
-    int greater_neighbors;
     int i = id_from_pos(x, y);
-
-    greater_neighbors = neighbors_with_value(x, y, copy_of_tiles[i], true);
-
+    int greater_neighbors = neighbors_with_value(x, y, all_tiles[i], true);
+    
+    
     if (greater_neighbors >= constants::WAR_THRESHHOLD and greater_neighbors <= constants::WAR_CAP) {
         all_tiles[i] = rand() % constants::WAR_CARD_COUNT;
-    } 
+    } else {
+        all_tiles[i] = all_tiles[i] == 0 ? 0 : all_tiles[i] - 1; 
+    }
 }
 
 void Grid::iterate( SDL_Renderer* window_renderer ) {
@@ -384,6 +396,9 @@ void Grid::iterate( SDL_Renderer* window_renderer ) {
                 break;
             case rps:
                 iterate_rps( x, y );
+                break;
+            case rps_true:
+                iterate_true_rps( x, y );
                 break;
             case war: 
                 iterate_war( x, y );
